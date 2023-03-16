@@ -1,5 +1,4 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { AsyncResource } from 'async_hooks';
 import { AppService } from './app.service';
 
 @Controller()
@@ -28,7 +27,7 @@ export class AppController {
           Total: (US) United States (not including territory data)
       - For CA, refer to https://www150.statcan.gc.ca/n1/pub/92-195-x/2011001/geo/prov/tbl/tbl8-eng.htm. Now only AB supported. 
   */
-  @Get('/query/price/:stateid')
+  @Get('/queryprice/:stateid')
   async queryRealtimeElectricityPrice(@Param('stateid') stateid: string) {
     let price: number = 0;
     switch (stateid) {
