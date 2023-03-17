@@ -1,5 +1,6 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
+import { Offer } from './offer.dto';
 
 @Controller()
 export class AppController {
@@ -38,5 +39,10 @@ export class AppController {
         price = await this.appService.queryUSElectricityPrice(stateid);
     }
     return price;
+  }
+
+  @Post('/storeoffer')
+  async storeOffer(@Body() offer: Offer) {
+    await this.appService.storeOffer(offer);
   }
 }
