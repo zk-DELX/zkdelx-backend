@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Offer } from './offer.dto';
+import { QueryOffer } from './queryoffer.dto';
 
 @Controller()
 export class AppController {
@@ -11,7 +12,7 @@ export class AppController {
     return this.appService.getHello();
   }
 
-    /*
+  /*
   Params: 
     stateid: 
       - For US, refer to https://www.sinfin.net/railways/world/usa/stateids.html plus the following regions.
@@ -32,7 +33,7 @@ export class AppController {
   async queryRealtimeElectricityPrice(@Param('stateid') stateid: string) {
     let price: number = 0;
     switch (stateid) {
-      case "AB":
+      case 'AB':
         price = await this.appService.queryCAElectricityPrice();
         break;
       default:
@@ -44,5 +45,11 @@ export class AppController {
   @Post('/storeoffer')
   async storeOffer(@Body() offer: Offer) {
     await this.appService.storeOffer(offer);
+  }
+
+  @Get('/searchoffers')
+  async searchOffers(@Body() queryoffer: QueryOffer) {
+    const offerRecords = await this.appService.searchOffers(queryoffer);
+    return offerRecords;
   }
 }

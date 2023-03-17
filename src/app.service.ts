@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Offer } from './offer.dto';
+import { QueryOffer } from './queryoffer.dto';
 import axios from 'axios';
 import { Polybase } from '@polybase/client';
 
@@ -59,5 +60,12 @@ export class AppService {
         offer.submitTime,
         offer.status,
       ]);
+  }
+
+  async searchOffers(queryoffer: QueryOffer) {
+    // this.db.collection('Offer').where("location", "==", "UK").get()
+    // console.log(queryoffer);
+    const offerRecords = await this.db.collection('Offer').get();
+    return offerRecords.data;
   }
 }
