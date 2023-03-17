@@ -66,6 +66,6 @@ export class AppService {
     // this.db.collection('Offer').where("location", "==", "UK").get()
     // console.log(queryoffer);
     const offerRecords = await this.db.collection('Offer').get();
-    return offerRecords.data;
+    return offerRecords;
   }
 }
