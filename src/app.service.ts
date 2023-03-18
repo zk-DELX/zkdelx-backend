@@ -3,7 +3,7 @@ import { Offer } from './offer.dto';
 import { QueryOffer } from './queryoffer.dto';
 import axios from 'axios';
 import { Polybase } from '@polybase/client';
-
+import { Client } from '@googlemaps/google-maps-services-js';
 @Injectable()
 export class AppService {
   // private readonly logger = new Logger(AppService.name);
@@ -49,6 +49,8 @@ export class AppService {
   }
 
   async storeOffer(offer: Offer) {
+    const locationSegs = offer.location.split(', ');
+    const city = locationSegs[locationSegs.length - 3];
     await this.db
       .collection('Offer')
       .create([
@@ -57,15 +59,50 @@ export class AppService {
         offer.amount,
         offer.price,
         offer.location,
+        city,
         offer.submitTime,
         offer.status,
       ]);
   }
 
   async searchOffers(queryoffer: QueryOffer) {
-    // this.db.collection('Offer').where("location", "==", "UK").get()
-    // console.log(queryoffer);
-    const offerRecords = await this.db.collection('Offer').get();
-    return offerRecords;
+    const locationSegs = queryoffer.location.split(', ');
+    const city = locationSegs[locationSegs.length - 3];
+    // query offers located in the same city
+    // default max return 100 records
+    const offerRecords = await this.db
+      .collection('Offer')
+      .where('city', '==', city)
+      .get();
+    const dests: string[] = [];
+    const offers = [];
+    offerRecords.data.forEach((record) => {
+      dests.push(record.data.location);
+      offers.push(record.data);
+    });
+    // calculate the distance matrix from buyer location to potential offers
+    const distanceArray = await this.calculateDistances(
+      [queryoffer.location],
+      dests,
+    );
+    offers.forEach((offer, index) => {
+      offer.distance = distanceArray[index];
+    });
+    return offers;
+  }
+
+  async calculateDistances(_origins: string[], _dests: string[]) {
+    var client = new Client({});
+    const distanceMatrixRes = await client.distancematrix({
+      params: {
+        origins: _origins,
+        destinations: _dests,
+        key: process.env.GOOGLE_MAPS_API_KEY,
+      },
+      timeout: 1000, // milliseconds
+    });
+    // distances data from buyer location to all offers
+    const distances = distanceMatrixRes.data.rows[0].elements;
+    return distances;
   }
 }
