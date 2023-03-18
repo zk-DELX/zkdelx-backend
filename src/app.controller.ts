@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Offer } from './offer.dto';
 import { QueryOffer } from './queryoffer.dto';
-
+import { QueryHistoricalOffers } from './queryhistoffers.dto';
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
@@ -48,8 +48,16 @@ export class AppController {
   }
 
   @Get('/searchoffers')
-  async searchOffers(@Body() queryoffer: QueryOffer) {
-    const offerRecords = await this.appService.searchOffers(queryoffer);
+  async searchListingOffers(@Body() queryoffer: QueryOffer) {
+    const offerRecords = await this.appService.searchListingOffers(queryoffer);
     return offerRecords;
+  }
+
+  @Get('/queryhistoricaloffers')
+  async queryHistoricalOffers(@Body() queryhistoffer: QueryHistoricalOffers) {
+    const historicalOfferRecords = await this.appService.searchHistoricalOffers(
+      queryhistoffer,
+    );
+    return historicalOfferRecords;
   }
 }

@@ -4,6 +4,8 @@ import { QueryOffer } from './queryoffer.dto';
 import axios from 'axios';
 import { Polybase } from '@polybase/client';
 import { Client } from '@googlemaps/google-maps-services-js';
+import { QueryHistoricalOffers } from './queryhistoffers.dto';
+
 @Injectable()
 export class AppService {
   // private readonly logger = new Logger(AppService.name);
@@ -65,14 +67,16 @@ export class AppService {
       ]);
   }
 
-  async searchOffers(queryoffer: QueryOffer) {
+  async searchListingOffers(queryoffer: QueryOffer) {
     const locationSegs = queryoffer.location.split(', ');
     const city = locationSegs[locationSegs.length - 3];
-    // query offers located in the same city
+    // query listing offers located in the same city
+    // more conditons can be added here and Polybase schema
     // default max return 100 records
     const offerRecords = await this.db
       .collection('Offer')
       .where('city', '==', city)
+      .where('status', '==', 'Listing')
       .get();
     const dests: string[] = [];
     const offers = [];
@@ -104,5 +108,20 @@ export class AppService {
     // distances data from buyer location to all offers
     const distances = distanceMatrixRes.data.rows[0].elements;
     return distances;
+  }
+
+  async searchHistoricalOffers(queryhistoffer: QueryHistoricalOffers) {
+    const myAccount = queryhistoffer.myAccount;
+    // query my sell/sold offers
+    const sellOfferRecords = await this.db
+      .collection('Offer')
+      .where('sellerAccount', '==', myAccount)
+      .get();
+    // query my buy/bought offers
+    const buyOfferRecords = await this.db
+      .collection('Offer')
+      .where('buyerAccount', '==', myAccount)
+      .get();
+    return sellOfferRecords.data.concat(buyOfferRecords.data);
   }
 }
