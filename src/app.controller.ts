@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AppService } from './app.service';
-import { Offer } from './offer.dto';
-import { QueryOffer } from './queryoffer.dto';
-import { QueryHistoricalOffers } from './queryhistoffers.dto';
+import { Offer } from './dtos/offer.dto';
+import { QueryOffer } from './dtos/queryoffer.dto';
+import { QueryHistoricalOffers } from './dtos/queryhistoffers.dto';
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}

@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Offer } from './offer.dto';
-import { QueryOffer } from './queryoffer.dto';
+import { Offer } from './dtos/offer.dto';
+import { QueryOffer } from './dtos/queryoffer.dto';
 import axios from 'axios';
 import { Polybase } from '@polybase/client';
 import { Client } from '@googlemaps/google-maps-services-js';
-import { QueryHistoricalOffers } from './queryhistoffers.dto';
+import { QueryHistoricalOffers } from './dtos/queryhistoffers.dto';
 
 @Injectable()
 export class AppService {
