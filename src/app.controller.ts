@@ -3,7 +3,7 @@ import { AppService } from './app.service';
 import { Offer } from './dtos/offer.dto';
 import { QueryOffer } from './dtos/queryoffer.dto';
 import { QueryHistoricalOffers } from './dtos/queryhistoffers.dto';
-import { AcceptOffer } from './dtos/acceptoffer.dto';
+import { UpdateOffer } from './dtos/updateoffer.dto';
 import {
   ApiBody,
   ApiConsumes,
@@ -133,8 +133,58 @@ export class AppController {
     status: 500,
     description: 'Internal server error',
   })
-  async pendOffer(@Body() acceptofferReq: AcceptOffer) {
+  async acceptOffer(@Body() acceptofferReq: UpdateOffer) {
     const res = await this.appService.acceptOffer(acceptofferReq);
+    return res;
+  }
+
+  @Post('/completeoffer')
+  @ApiOperation({
+    summary: 'Complete a listing offer',
+    description:
+      'A buyer completes an offer, updates its status to Complete, and adds finalAmount',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Sucessfully update offer data to Polybase',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Record not found',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Collection function error: can only complete Pending offer',
+  })
+  async completeOffer(@Body() completeofferReq: UpdateOffer) {
+    const res = await this.appService.completeOffer(completeofferReq);
+    return res;
+  }
+
+  @Post('/canceloffer')
+  @ApiOperation({
+    summary: 'Cancel a pending offer',
+    description:
+      'A buyer cancels an accepted pending offer, updates its status back to Listing, and remove buyerAccount',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Sucessfully update offer data to Polybase',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Record not found',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Collection function error: can only cancel Pending offer',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'collection function error: cannot cancel others offer',
+  })
+  async cancelOffer(@Body() cancelofferReq: UpdateOffer) {
+    const res = await this.appService.cancelOffer(cancelofferReq);
     return res;
   }
 }

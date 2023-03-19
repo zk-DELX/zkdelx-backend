@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Polybase } from '@polybase/client';
 import { Client } from '@googlemaps/google-maps-services-js';
 import { QueryHistoricalOffers } from './dtos/queryhistoffers.dto';
-import { AcceptOffer } from './dtos/acceptoffer.dto';
+import { UpdateOffer } from './dtos/updateoffer.dto';
 @Injectable()
 export class AppService {
   // private readonly logger = new Logger(AppService.name);
@@ -125,15 +125,36 @@ export class AppService {
     return sellOfferRecords.data.concat(buyOfferRecords.data);
   }
 
-  async acceptOffer(acceptofferReq: AcceptOffer) {
+  async acceptOffer(acceptofferReq: UpdateOffer) {
     const offerID = acceptofferReq.offerID;
     const buyerAccount = acceptofferReq.buyerAccount;
-    const acceptTime = acceptofferReq.acceptTime;
+    const acceptTime = acceptofferReq.updateTime;
     const acceptAmount = acceptofferReq.amount;
     const res = await this.db
       .collection('Offer')
       .record(offerID)
       .call('acceptOffer', [buyerAccount, acceptTime, acceptAmount]);
+    return res;
+  }
+
+  async completeOffer(completeofferReq: UpdateOffer) {
+    const offerID = completeofferReq.offerID;
+    const buyerAccount = completeofferReq.buyerAccount;
+    const finalAmount = completeofferReq.amount;
+    const res = await this.db
+      .collection('Offer')
+      .record(offerID)
+      .call('completeOffer', [buyerAccount, finalAmount]);
+    return res;
+  }
+
+  async cancelOffer(cancelofferReq: UpdateOffer) {
+    const offerID = cancelofferReq.offerID;
+    const buyerAccount = cancelofferReq.buyerAccount;
+    const res = await this.db
+      .collection('Offer')
+      .record(offerID)
+      .call('cancelOffer', [buyerAccount]);
     return res;
   }
 }

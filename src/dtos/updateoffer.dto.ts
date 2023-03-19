@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-export class AcceptOffer {
+export class UpdateOffer {
   @ApiProperty({
     required: true,
     description: 'Unique offerID',
@@ -33,5 +33,5 @@ export class AcceptOffer {
     description: 'The UNIX timestamp when buyer accepts this offer',
     example: '1679183555',
   })
-  public acceptTime: number;
+  public updateTime: number;
 }
