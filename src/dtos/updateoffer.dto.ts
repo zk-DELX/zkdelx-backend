@@ -9,10 +9,10 @@ export class UpdateOffer {
 
   @ApiProperty({
     required: true,
-    description: 'Buyer account of this offer',
+    description: 'User (buyer/seller) account of this offer',
     example: '0x4726a2FBcb2844beF75979dcFF50b3AC8F50AC53',
   })
-  public buyerAccount: string;
+  public userAccount: string;
 
   @ApiProperty({
     required: true,

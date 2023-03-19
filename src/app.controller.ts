@@ -165,7 +165,7 @@ export class AppController {
   @ApiOperation({
     summary: 'Cancel a pending offer',
     description:
-      'A buyer cancels an accepted pending offer, updates its status back to Listing, and remove buyerAccount',
+      'A buyer cancels an accepted pending offer, updates its status back to Listing, and remove buyerAccount & acceptTime',
   })
   @ApiResponse({
     status: 201,
@@ -185,6 +185,59 @@ export class AppController {
   })
   async cancelOffer(@Body() cancelofferReq: UpdateOffer) {
     const res = await this.appService.cancelOffer(cancelofferReq);
+    return res;
+  }
+
+  @Post('/expireoffer')
+  @ApiOperation({
+    summary: 'Expire a pending offer',
+    description:
+      'A seller expires an accepted pending offer, updates its status back to Listing, and remove buyerAccount & acceptTime',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Sucessfully update offer data to Polybase',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Record not found',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Collection function error: can only expire Pending offer',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'collection function error: cannot expire others offer',
+  })
+  async expireOffer(@Body() expireofferReq: UpdateOffer) {
+    const res = await this.appService.expireOffer(expireofferReq);
+    return res;
+  }
+
+  @Post('/deleteoffer')
+  @ApiOperation({
+    summary: 'Delete a listing offer',
+    description: 'A seller deletes a listing offer from Polybase',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Sucessfully delete offer data from Polybase',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Record not found',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Collection function error: can only delete Listing offer',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'collection function error: cannot delete others offer',
+  })
+  async deleteOffer(@Body() deleteofferReq: UpdateOffer) {
+    const res = await this.appService.deleteOffer(deleteofferReq);
     return res;
   }
 }

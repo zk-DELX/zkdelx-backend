@@ -127,7 +127,7 @@ export class AppService {
 
   async acceptOffer(acceptofferReq: UpdateOffer) {
     const offerID = acceptofferReq.offerID;
-    const buyerAccount = acceptofferReq.buyerAccount;
+    const buyerAccount = acceptofferReq.userAccount;
     const acceptTime = acceptofferReq.updateTime;
     const acceptAmount = acceptofferReq.amount;
     const res = await this.db
@@ -139,7 +139,7 @@ export class AppService {
 
   async completeOffer(completeofferReq: UpdateOffer) {
     const offerID = completeofferReq.offerID;
-    const buyerAccount = completeofferReq.buyerAccount;
+    const buyerAccount = completeofferReq.userAccount;
     const finalAmount = completeofferReq.amount;
     const res = await this.db
       .collection('Offer')
@@ -150,11 +150,31 @@ export class AppService {
 
   async cancelOffer(cancelofferReq: UpdateOffer) {
     const offerID = cancelofferReq.offerID;
-    const buyerAccount = cancelofferReq.buyerAccount;
+    const buyerAccount = cancelofferReq.userAccount;
     const res = await this.db
       .collection('Offer')
       .record(offerID)
       .call('cancelOffer', [buyerAccount]);
+    return res;
+  }
+
+  async expireOffer(expireofferReq: UpdateOffer) {
+    const offerID = expireofferReq.offerID;
+    const sellerAccount = expireofferReq.userAccount;
+    const res = await this.db
+      .collection('Offer')
+      .record(offerID)
+      .call('expireOffer', [sellerAccount]);
+    return res;
+  }
+
+  async deleteOffer(deleteofferReq: UpdateOffer) {
+    const offerID = deleteofferReq.offerID;
+    const sellerAccount = deleteofferReq.userAccount;
+    const res = await this.db
+      .collection('Offer')
+      .record(offerID)
+      .call('del', [sellerAccount]);
     return res;
   }
 }
