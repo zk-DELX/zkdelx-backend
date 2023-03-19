@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Polybase } from '@polybase/client';
 import { Client } from '@googlemaps/google-maps-services-js';
 import { QueryHistoricalOffers } from './dtos/queryhistoffers.dto';
-
+import { AcceptOffer } from './dtos/acceptoffer.dto';
 @Injectable()
 export class AppService {
   // private readonly logger = new Logger(AppService.name);
@@ -123,5 +123,17 @@ export class AppService {
       .where('buyerAccount', '==', myAccount)
       .get();
     return sellOfferRecords.data.concat(buyOfferRecords.data);
+  }
+
+  async acceptOffer(acceptofferReq: AcceptOffer) {
+    const offerID = acceptofferReq.offerID;
+    const buyerAccount = acceptofferReq.buyerAccount;
+    const acceptTime = acceptofferReq.acceptTime;
+    const acceptAmount = acceptofferReq.amount;
+    const res = await this.db
+      .collection('Offer')
+      .record(offerID)
+      .call('acceptOffer', [buyerAccount, acceptTime, acceptAmount]);
+    return res;
   }
 }

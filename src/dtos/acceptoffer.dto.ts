@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-export class QueryOffer {
+export class AcceptOffer {
+  @ApiProperty({
+    required: true,
+    description: 'Unique offerID',
+    example: 'ID-JDJKVFO',
+  })
+  public offerID: string;
+
   @ApiProperty({
     required: true,
     description: 'Buyer account of this offer',
@@ -23,15 +30,8 @@ export class QueryOffer {
 
   @ApiProperty({
     required: true,
-    description: 'The current location/address of buyer',
-    example: '13021 20 Ave SW, Edmonton, Alberta, Canada',
-  })
-  public location: string;
-
-  @ApiProperty({
-    required: false,
-    description: '(Optional) The UNIX timestamp when buyer submits this search',
+    description: 'The UNIX timestamp when buyer accepts this offer',
     example: '1679183555',
   })
-  public submitTime?: number;
+  public acceptTime: number;
 }
