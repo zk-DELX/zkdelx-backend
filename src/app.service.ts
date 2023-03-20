@@ -1,10 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Offer } from './dtos/offer.dto';
-import { QueryOffer } from './dtos/queryoffer.dto';
 import axios from 'axios';
 import { Polybase } from '@polybase/client';
 import { Client } from '@googlemaps/google-maps-services-js';
-import { QueryHistoricalOffers } from './dtos/queryhistoffers.dto';
 import { UpdateOffer } from './dtos/updateoffer.dto';
 @Injectable()
 export class AppService {
@@ -67,8 +65,9 @@ export class AppService {
       ]);
   }
 
-  async searchListingOffers(queryoffer: QueryOffer) {
-    const locationSegs = queryoffer.location.split(', ');
+  async searchListingOffers(location: string, price: number, amount: number) {
+    console.log(location, price, amount);
+    const locationSegs = location.split(', ');
     const city = locationSegs[locationSegs.length - 3];
     // query listing offers located in the same city
     // more conditons can be added here and Polybase schema
@@ -77,6 +76,8 @@ export class AppService {
       .collection('Offer')
       .where('city', '==', city)
       .where('status', '==', 'Listing')
+      // .where('price', '<=', price)
+      // .where('amount', '>=', amount)
       .get();
     const dests: string[] = [];
     const offers = [];
@@ -85,10 +86,7 @@ export class AppService {
       offers.push(record.data);
     });
     // calculate the distance matrix from buyer location to potential offers
-    const distanceArray = await this.calculateDistances(
-      [queryoffer.location],
-      dests,
-    );
+    const distanceArray = await this.calculateDistances([location], dests);
     offers.forEach((offer, index) => {
       offer.distance = distanceArray[index];
     });
@@ -110,8 +108,7 @@ export class AppService {
     return distances;
   }
 
-  async searchHistoricalOffers(queryhistoffer: QueryHistoricalOffers) {
-    const myAccount = queryhistoffer.myAccount;
+  async searchHistoricalOffers(myAccount: string) {
     // query my sell/sold offers
     const sellOfferRecords = await this.db
       .collection('Offer')

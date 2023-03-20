@@ -44,15 +44,16 @@ export class Offer {
 
   @ApiProperty({
     required: true,
-    description: 'Current status of this offer',
-    example: 'Listing | Pending | Complete',
+    description:
+      'Current status of this offer. Values: Listing | Pending | Complete',
+    example: 'Listing',
   })
   public status: string;
 
-  @ApiProperty({
-    required: false,
-    description: '(Optional) Buyer account of this offer',
-    example: '0x4726a2FBcb2844beF75979dcFF50b3AC8F50AC53',
-  })
-  public buyerAccount?: string;
+  // @ApiProperty({
+  //   required: false,
+  //   description: '(Optional) Buyer account of this offer',
+  //   // example: '0x4726a2FBcb2844beF75979dcFF50b3AC8F50AC53',
+  // })
+  // public buyerAccount?: string;
 }

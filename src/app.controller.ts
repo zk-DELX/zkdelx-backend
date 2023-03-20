@@ -1,16 +1,13 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Offer } from './dtos/offer.dto';
-import { QueryOffer } from './dtos/queryoffer.dto';
-import { QueryHistoricalOffers } from './dtos/queryhistoffers.dto';
 import { UpdateOffer } from './dtos/updateoffer.dto';
 import {
-  ApiBody,
-  ApiConsumes,
   ApiOperation,
   ApiResponse,
   ApiTags,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 
 @ApiTags('Offers')
@@ -63,7 +60,7 @@ export class AppController {
   @ApiOperation({
     summary: 'Store an offer to Polybase',
     description:
-      'Store an offer to Polybase. Offer fields include: offerID, sellerAccount, amount, price, location, submitTime, status, buyerAccount',
+      'Store an offer to Polybase. Required offer fields include: offerID, sellerAccount, amount, price, location, submitTime, status',
   })
   @ApiResponse({
     status: 201,
@@ -77,40 +74,84 @@ export class AppController {
     await this.appService.storeOffer(offer);
   }
 
-  @Get('/searchoffers')
+  @Get('/searchoffers/:location/:price?/:amount?')
   @ApiOperation({
     summary: 'Queriy listing offers from Polybase',
     description: 'A buyer queries all listing offers within the same city',
+  })
+  @ApiQuery({
+    name: 'location',
+    type: String,
+    description:
+      'Address in the format unit street, city, state/province, country',
+    required: true,
+  })
+  @ApiQuery({
+    name: 'price',
+    type: Number,
+    description: 'Max price rate at which a buyer wants to buy',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'amount',
+    type: Number,
+    description: 'Max amount a buyer wants to buy',
+    required: false,
   })
   @ApiResponse({
     status: 200,
     description: 'Sucessfully query valid listing offers from Polybase',
   })
   @ApiResponse({
+    status: 400,
+    description: 'no index found matching the query',
+  })
+  @ApiResponse({
     status: 500,
     description: 'Internal server error',
   })
-  async searchListingOffers(@Body() queryoffer: QueryOffer) {
-    const offerRecords = await this.appService.searchListingOffers(queryoffer);
+  async searchListingOffers(
+    @Query('location') location: string,
+    @Query('price') price?: number,
+    @Query('amount') amount?: number,
+  ) {
+    if (price == undefined) price = 1000;
+    if (amount == undefined) amount = 0;
+    const offerRecords = await this.appService.searchListingOffers(
+      location,
+      price,
+      amount,
+    );
     return offerRecords;
   }
 
-  @Get('/queryhistoricaloffers')
+  @Get('/queryhistoricaloffers/:myaccount')
   @ApiOperation({
     summary: 'Queriy historical offers from Polybase',
     description: 'A user queries all his/her historical offers',
+  })
+  @ApiQuery({
+    name: 'myaccount',
+    type: String,
+    description: "Current user's account address",
+    example: '0x0160ceDB6cae2EAd33F5c2fa25FE078485a07b63',
+    required: true,
   })
   @ApiResponse({
     status: 200,
     description: 'Sucessfully query historical offer data from Polybase',
   })
   @ApiResponse({
+    status: 400,
+    description: 'no index found matching the query',
+  })
+  @ApiResponse({
     status: 500,
     description: 'Internal server error',
   })
-  async queryHistoricalOffers(@Body() queryhistoffer: QueryHistoricalOffers) {
+  async queryHistoricalOffers(@Query('myaccount') myaccount: string) {
     const historicalOfferRecords = await this.appService.searchHistoricalOffers(
-      queryhistoffer,
+      myaccount,
     );
     return historicalOfferRecords;
   }
