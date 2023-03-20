@@ -65,8 +65,12 @@ export class AppService {
       ]);
   }
 
-  async searchListingOffers(location: string, price: number, amount: number) {
-    console.log(location, price, amount);
+  async searchListingOffers(
+    buyerAccount: string,
+    location: string,
+    price: number,
+    amount: number,
+  ) {
     const locationSegs = location.split(', ');
     const city = locationSegs[locationSegs.length - 3];
     // query listing offers located in the same city
@@ -82,8 +86,15 @@ export class AppService {
     const dests: string[] = [];
     const offers = [];
     offerRecords.data.forEach((record) => {
-      dests.push(record.data.location);
-      offers.push(record.data);
+      var recordData = record.data;
+      if (
+        recordData.sellerAccount != buyerAccount &&
+        recordData.price <= price &&
+        recordData.amount >= amount
+      ) {
+        dests.push(recordData.location);
+        offers.push(recordData);
+      }
     });
     // calculate the distance matrix from buyer location to potential offers
     const distanceArray = await this.calculateDistances([location], dests);

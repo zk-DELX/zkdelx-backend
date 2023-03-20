@@ -74,10 +74,16 @@ export class AppController {
     await this.appService.storeOffer(offer);
   }
 
-  @Get('/searchoffers/:location/:price?/:amount?')
+  @Get('/searchoffers/:buyerAccount/:location/:amount?/:price?')
   @ApiOperation({
     summary: 'Queriy listing offers from Polybase',
     description: 'A buyer queries all listing offers within the same city',
+  })
+  @ApiQuery({
+    name: 'buyerAccount',
+    type: String,
+    description: "Buyer's account address. Cannot buy own offer",
+    required: true,
   })
   @ApiQuery({
     name: 'location',
@@ -111,6 +117,7 @@ export class AppController {
     description: 'Internal server error',
   })
   async searchListingOffers(
+    @Query('buyerAccount') buyerAccount: string,
     @Query('location') location: string,
     @Query('price') price?: number,
     @Query('amount') amount?: number,
@@ -118,6 +125,7 @@ export class AppController {
     if (price == undefined) price = 1000;
     if (amount == undefined) amount = 0;
     const offerRecords = await this.appService.searchListingOffers(
+      buyerAccount,
       location,
       price,
       amount,
