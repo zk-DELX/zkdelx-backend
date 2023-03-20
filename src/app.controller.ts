@@ -79,26 +79,26 @@ export class AppController {
     summary: 'Queriy listing offers from Polybase',
     description: 'A buyer queries all listing offers within the same city',
   })
-  @ApiQuery({
+  @ApiParam({
     name: 'buyerAccount',
     type: String,
     description: "Buyer's account address. Cannot buy own offer",
     required: true,
   })
-  @ApiQuery({
+  @ApiParam({
     name: 'location',
     type: String,
     description:
       'Address in the format unit street, city, state/province, country',
     required: true,
   })
-  @ApiQuery({
+  @ApiParam({
     name: 'price',
     type: Number,
     description: 'Max price rate at which a buyer wants to buy',
     required: false,
   })
-  @ApiQuery({
+  @ApiParam({
     name: 'amount',
     type: Number,
     description: 'Max amount a buyer wants to buy',
@@ -117,13 +117,14 @@ export class AppController {
     description: 'Internal server error',
   })
   async searchListingOffers(
-    @Query('buyerAccount') buyerAccount: string,
-    @Query('location') location: string,
-    @Query('price') price?: number,
-    @Query('amount') amount?: number,
+    @Param('buyerAccount') buyerAccount: string,
+    @Param('location') location: string,
+    @Param('price') price?: number,
+    @Param('amount') amount?: number,
   ) {
-    const decodedLocation = location.replace(/#/g, ' ');
-    console.log(decodedLocation);
+    console.log(location);
+    const decodedLocation = location.replace(/-/g, ' ');
+    console.log('decodedLocation:', decodedLocation);
     if (price == undefined) price = 1000;
     if (amount == undefined) amount = 0;
     const offerRecords = await this.appService.searchListingOffers(
@@ -140,7 +141,7 @@ export class AppController {
     summary: 'Queriy historical offers from Polybase',
     description: 'A user queries all his/her historical offers',
   })
-  @ApiQuery({
+  @ApiParam({
     name: 'myaccount',
     type: String,
     description: "Current user's account address",
@@ -159,7 +160,7 @@ export class AppController {
     status: 500,
     description: 'Internal server error',
   })
-  async queryHistoricalOffers(@Query('myaccount') myaccount: string) {
+  async queryHistoricalOffers(@Param('myaccount') myaccount: string) {
     const historicalOfferRecords = await this.appService.searchHistoricalOffers(
       myaccount,
     );
