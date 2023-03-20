@@ -71,6 +71,7 @@ export class AppService {
     price: number,
     amount: number,
   ) {
+    console.log(location);
     const locationSegs = location.split(', ');
     const city = locationSegs[locationSegs.length - 3];
     // query listing offers located in the same city

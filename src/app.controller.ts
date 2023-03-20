@@ -122,11 +122,13 @@ export class AppController {
     @Query('price') price?: number,
     @Query('amount') amount?: number,
   ) {
+    const decodedLocation = location.replace(/#/g, ' ');
+    console.log(decodedLocation);
     if (price == undefined) price = 1000;
     if (amount == undefined) amount = 0;
     const offerRecords = await this.appService.searchListingOffers(
       buyerAccount,
-      location,
+      decodedLocation,
       price,
       amount,
     );
