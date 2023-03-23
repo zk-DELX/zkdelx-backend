@@ -121,21 +121,20 @@ export class AppService {
   }
 
   async searchHistoricalOffers(myAccount: string) {
-    // complete
     // query my bought offers
-    const buyOfferRecords = await this.db
+    const boughtOfferRecords = await this.db
       .collection('Offer')
       .where('buyerAccount', '==', myAccount)
       .where('status', '==', 'Complete')
       .get();
     // query my sold offers
-    const sellOfferRecords = await this.db
+    const soldOfferRecords = await this.db
       .collection('Offer')
       .where('sellerAccount', '==', myAccount)
       .where('status', '==', 'Complete')
       .get();
-    const boughtOffers = buyOfferRecords.data;
-    const soldOffers = sellOfferRecords.data;
+    const boughtOffers = boughtOfferRecords.data;
+    const soldOffers = soldOfferRecords.data;
     const histOffers = { boughtOffers, soldOffers };
     return histOffers;
   }

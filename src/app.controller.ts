@@ -161,6 +161,7 @@ export class AppController {
     description: 'Internal server error',
   })
   async queryHistoricalOffers(@Param('myaccount') myaccount: string) {
+    console.log(myaccount);
     const historicalOffers = await this.appService.searchHistoricalOffers(
       myaccount,
     );
@@ -181,7 +182,7 @@ export class AppController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Sucessfully query my inprocess offer data from Polybase',
+    description: 'Sucessfully query my in-process offer data from Polybase',
   })
   @ApiResponse({
     status: 400,
