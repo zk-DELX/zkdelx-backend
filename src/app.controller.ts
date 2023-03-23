@@ -161,10 +161,39 @@ export class AppController {
     description: 'Internal server error',
   })
   async queryHistoricalOffers(@Param('myaccount') myaccount: string) {
-    const historicalOfferRecords = await this.appService.searchHistoricalOffers(
+    const historicalOffers = await this.appService.searchHistoricalOffers(
       myaccount,
     );
-    return historicalOfferRecords;
+    return historicalOffers;
+  }
+
+  @Get('/queryinprocessoffers/:myaccount')
+  @ApiOperation({
+    summary: 'Queriy my in-process offers from Polybase',
+    description: 'A user queries all his/her in-process offers',
+  })
+  @ApiParam({
+    name: 'myaccount',
+    type: String,
+    description: "Current user's account address",
+    example: '0x0160ceDB6cae2EAd33F5c2fa25FE078485a07b63',
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Sucessfully query my inprocess offer data from Polybase',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'no index found matching the query',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+  })
+  async queryInProcessOffers(@Param('myaccount') myaccount: string) {
+    const myOffers = await this.appService.searchInProcessOffers(myaccount);
+    return myOffers;
   }
 
   @Post('/acceptoffer')

@@ -121,17 +121,47 @@ export class AppService {
   }
 
   async searchHistoricalOffers(myAccount: string) {
-    // query my sell/sold offers
-    const sellOfferRecords = await this.db
-      .collection('Offer')
-      .where('sellerAccount', '==', myAccount)
-      .get();
-    // query my buy/bought offers
+    // complete
+    // query my bought offers
     const buyOfferRecords = await this.db
       .collection('Offer')
       .where('buyerAccount', '==', myAccount)
+      .where('status', '==', 'Complete')
       .get();
-    return sellOfferRecords.data.concat(buyOfferRecords.data);
+    // query my sold offers
+    const sellOfferRecords = await this.db
+      .collection('Offer')
+      .where('sellerAccount', '==', myAccount)
+      .where('status', '==', 'Complete')
+      .get();
+    const boughtOffers = buyOfferRecords.data;
+    const soldOffers = sellOfferRecords.data;
+    const histOffers = { boughtOffers, soldOffers };
+    return histOffers;
+  }
+
+  async searchInProcessOffers(myAccount: string) {
+    // query my buy offers
+    const buyOfferRecords = await this.db
+      .collection('Offer')
+      .where('buyerAccount', '==', myAccount)
+      .where('status', '==', 'Pending')
+      .get();
+    // query my sell offers
+    const sellListingOfferRecords = await this.db
+      .collection('Offer')
+      .where('sellerAccount', '==', myAccount)
+      .get();
+    const sellPendingOfferRecords = await this.db
+      .collection('Offer')
+      .where('sellerAccount', '==', myAccount)
+      .get();
+    const sellOffers = sellListingOfferRecords.data.concat(
+      sellPendingOfferRecords.data,
+    );
+    const buyOffers = buyOfferRecords.data;
+    const inProcessOffers = { buyOffers, sellOffers };
+    return inProcessOffers;
   }
 
   async acceptOffer(acceptofferReq: UpdateOffer) {
