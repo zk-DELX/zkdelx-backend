@@ -122,9 +122,9 @@ export class AppController {
     @Param('price') price?: number,
     @Param('amount') amount?: number,
   ) {
-    console.log(location);
+    // console.log(location);
     const decodedLocation = location.replace(/-/g, ' ');
-    console.log('decodedLocation:', decodedLocation);
+    // console.log('decodedLocation:', decodedLocation);
     if (price == undefined) price = 1000;
     if (amount == undefined) amount = 0;
     const offerRecords = await this.appService.searchListingOffers(
@@ -161,7 +161,7 @@ export class AppController {
     description: 'Internal server error',
   })
   async queryHistoricalOffers(@Param('myaccount') myaccount: string) {
-    console.log(myaccount);
+    // console.log(myaccount);
     const historicalOffers = await this.appService.searchHistoricalOffers(
       myaccount,
     );
