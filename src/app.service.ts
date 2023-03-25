@@ -150,10 +150,12 @@ export class AppService {
     const sellListingOfferRecords = await this.db
       .collection('Offer')
       .where('sellerAccount', '==', myAccount)
+      .where('status', '==', 'Listing')
       .get();
     const sellPendingOfferRecords = await this.db
       .collection('Offer')
       .where('sellerAccount', '==', myAccount)
+      .where('status', '==', 'Pending')
       .get();
     const sellOffers = sellListingOfferRecords.data.concat(
       sellPendingOfferRecords.data,
@@ -164,6 +166,7 @@ export class AppService {
   }
 
   async acceptOffer(acceptofferReq: UpdateOffer) {
+    console.log(acceptofferReq);
     const offerID = acceptofferReq.offerID;
     const buyerAccount = acceptofferReq.userAccount;
     const acceptTime = acceptofferReq.updateTime;
